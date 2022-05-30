@@ -36,8 +36,15 @@ sudo nano /etc/hosts
 
 # add line to /etc/hosts
 192.168.64.16 k3s-server
-# use actual ip address of instanceß
+# use actual ip address of instance
 # Save and close the file
+
+# allow other users to see contents of k3s config file
+sudo chmod +r /etc/rancher/k3s/k3s.yaml
+
+# Edit ~/.profile to add KUBECONFIG env to ubuntu user, add line:
+# - Do this if planning to use server instance as admin system
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
 # Exit Server instance
 exit
@@ -85,4 +92,50 @@ curl -sfL https://get.k3s.io | sudo K3S_TOKEN=mysecret K3S_URL=https://k3s-serve
 
 # exit out of 
 exit
+```
+## Local Admin of K3S Cluster
+
+Assuming kubectl is available on your local system, to use that instead of logging into the k3s-server or instance as the "admin" system, you can copy the kubeconfig from the k3s-server locally.
+
+### Mac (Homebrew) Kubernetes CLI Install
+
+```bash
+# install kubernetes tools (kubectl) and Helm
+brew install kubernetes-cli helm
+# restart local terminal session
+
+# should show path within homebrew dir
+which kubectl
+
+# ask for version to confirm
+kubectl version --short=true --client=true
+```
+
+### Transfer K3S Config Locally
+
+```bash
+# Transfer k3s config to local (host) system
+# - Can adjust path to place file in preferred directory, adjust other commands accordingly
+multipass transfer k3s-server:/etc/rancher/k3s/k3s.yaml ~/k3s-config.yaml
+
+# edit k3s-config.yaml - update "server" field with IP address of k3s-server
+# - Use nano or code command depending on if VSCode is installed
+code ~/k3s-config.yaml
+
+# update zsh or bash profile to export KUBECONFIG env to k3s config file
+# - can use "code" instead of "nano" if VSCode is installed
+nano ~/.zshrc  # Mac
+# or
+nano ~/.bashrc # Windows (GitBash) or Linux
+# or
+nano ~/.profile # Ubuntu instance
+
+# Contents of profile script (add line):
+export KUBECONFIG=~/k3s-config.yaml
+# save and close profile file
+# restart local terminal session
+# - OR, run export command directly in terminal session
+
+# Test local kubectl with k3s:
+kubectl get nodes
 ```
