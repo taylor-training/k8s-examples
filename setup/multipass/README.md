@@ -36,6 +36,7 @@ sudo nano /etc/hosts
 
 # add line to /etc/hosts
 192.168.64.16 k3s-server
+# use actual ip address of instanceß
 # Save and close the file
 
 # Exit Server instance
