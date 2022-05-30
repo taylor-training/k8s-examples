@@ -17,6 +17,16 @@ kubectl -n kubernetes-dashboard describe secret admin-user-token | grep '^token'
 
 ### Start Proxy
 
+Highly recommend starting proxy within dedicated terminal session
+
 ```bash
 kubectl proxy
 ```
+
+### Access with Local web browser
+
+Open local web browser to address:
+
+`http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/'
+
+Paste token into field.
